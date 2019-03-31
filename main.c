@@ -20,8 +20,6 @@ typedef struct{
 
 polynomial initPoly();                              //function for initializing a polynomial
 int isValid(polynomial);                            //function for checking if a polynomial is valid or not
-float coef(polynomial, int);                        //function returning coefficient of input polynomial's input exponent
-int leadExp(polynomial);                            //function returning the largest exponent of input polynomial
 polynomial attatch(polynomial, float, float);       //function for adding a term to a input polynomial
 void add(polynomial, polynomial);                   //function for adding two polynomials and displaying its result
 
@@ -29,7 +27,6 @@ int main(){
 
 
     int input;                  //variable for storing input character
-//0 input must be handled
     printf("Input first polynomial\n");
     float poly1[100];                               //array to store first polynomial's terms data temporarily
     char keyInput[100];
@@ -53,6 +50,7 @@ int main(){
             printf("Exponent should be only integer! Input Error.\n");
             exit(0);
         }
+
         poly1[poly1cnt] = gotValue;
 
         ptr = strtok(NULL, " ");
@@ -65,7 +63,7 @@ int main(){
         exit(0);
     }
 
-    polynomial firstPoly = initPoly();
+    polynomial firstPoly = initPoly();              //the polynomial variable directly representing first polynomial!
 
     for(int i = 0; i < poly1cnt; i = i + 2){
         attatch(firstPoly, poly1[i], poly1[i+1]);
@@ -75,7 +73,23 @@ int main(){
 
     firstPoly.end--;                                //polynomial's end is always added once more, so needs to be subtracted
 
+    for(int i = firstPoly.start; i <= firstPoly.end; i++){        //sorting data in descending order using bubble sort
+        for(int j = firstPoly.start; j <= firstPoly.end - i; j++){
+            if(terms[j].expon < terms[j+1].expon){
+                float tempCoef;
+                int tempExpon;
 
+                tempExpon = terms[j].expon;
+                terms[j].expon = terms[j+1].expon;
+                terms[j+1].expon = tempExpon;
+
+                tempCoef = terms[j].coef;
+                terms[j].coef = terms[j+1].coef;
+                terms[j+1].coef = tempCoef;
+
+            }
+        }
+    };
 
 
     printf("Input Second polynomial\n");
@@ -111,7 +125,7 @@ int main(){
         exit(0);
     }
 
-    polynomial secondPoly = initPoly();
+    polynomial secondPoly = initPoly();             //polynomial variable directly representing second polynomial!
 
     for(int i = 0; i < poly2cnt; i = i + 2){
         attatch(secondPoly, poly2[i], poly2[i+1]);
@@ -121,19 +135,26 @@ int main(){
 
     secondPoly.end--;                                //polynomial's end is always added once more, so needs to be subtracted
 
+    for(int i = secondPoly.start; i <= secondPoly.end; i++){        //sorting data in descending order using bubble sort
+        for(int j = secondPoly.start; j <= secondPoly.end - (i-secondPoly.start); j++){
+            if(terms[j].expon < terms[j+1].expon){
+                float tempCoef;
+                int tempExpon;
 
-    //test
+                tempExpon = terms[j].expon;
+                terms[j].expon = terms[j+1].expon;
+                terms[j+1].expon = tempExpon;
 
-    printf("usedTerms count : %d\n", usedTerms);
-    printf("first poly start : %d\n", firstPoly.start);
-    printf("first poly end : %d\n", firstPoly.end);
-    printf("second poly start : %d\n", secondPoly.start);
-    printf("second poly end : %d\n", secondPoly.end);
+                tempCoef = terms[j].coef;
+                terms[j].coef = terms[j+1].coef;
+                terms[j+1].coef = tempCoef;
 
-    for(int i = 0; i < usedTerms; i++){
-        printf("%f %d\n", terms[i].coef, terms[i].expon);
-    }
+            }
+        }
+    };
 
+
+    add(firstPoly, secondPoly);
 
 }
 
@@ -171,22 +192,6 @@ int isValid(polynomial poly){
     else return 1;
 }
 
-float coef(polynomial poly, int expon){
-    if(isValid(poly)) {
-        for (int i = poly.start; i <=
-                                 poly.end; i++) {          //for loop checks is there is input exponent in input polynomial. If exists, returns its coefficient
-            if (terms[i].expon == expon)
-                return terms[i].coef;
-        }
-    }
-    return 0;               //if input exponent does not exists in input polynomial, returns 0
-}
-
-int leadExp(polynomial poly){
-    if(isValid(poly))
-        return terms[poly.start].expon;                     //since we will store terms in order, starting position's exponent will always be a leading exponent
-}
-
 polynomial attatch(polynomial poly, float coef, float expon){
     if(usedTerms == 100){                                   //exception handling for situation terms array is full
         printf("There are no space for new terms!");
@@ -200,7 +205,46 @@ polynomial attatch(polynomial poly, float coef, float expon){
 }
 
 void add(polynomial pol1, polynomial pol2){
+    if(isValid(pol1) && isValid(pol2)){                     //add if both polynomials are valid
+        int pol1cnt = pol1.start, pol2cnt = pol2.start;
 
+        while(1){
+            if(terms[pol1cnt].expon == terms[pol2cnt].expon) {
+                printf("%f^%d+ ", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
+                pol1cnt++;
+                pol2cnt++;
+            }
+            else if(terms[pol1cnt].expon > terms[pol2cnt].expon){
+                printf("%f^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
+                pol1cnt++;
+            }
+            else if(terms[pol1cnt].expon < terms[pol2cnt].expon){
+                printf("%f^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
+                pol2cnt++;
+            }
+
+            if(pol1cnt > pol1.end && pol2cnt <= pol2.end){
+                while(pol2cnt < pol2.end){
+                    printf("%f^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
+                    pol2cnt++;
+                }
+                printf("%f^%d.", terms[pol2cnt].coef, terms[pol2cnt].expon);
+                break;
+            }
+
+            if(pol2cnt > pol2.end && pol1cnt <= pol1.end){
+                while(pol1cnt < pol1.end){
+                    printf("%f^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
+                    pol1cnt++;
+                }
+                printf("%f^%d.", terms[pol1cnt].coef, terms[pol1cnt].expon);
+                break;
+            }
+
+        }
+
+
+    }
 }
 
 
