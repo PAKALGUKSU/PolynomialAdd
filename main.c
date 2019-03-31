@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 #define MAX_TERMS 101           //We can contain no more than 100 set of (coef, expon)
 
@@ -20,8 +22,8 @@ polynomial initPoly();                              //function for initializing 
 int isValid(polynomial);                            //function for checking if a polynomial is valid or not
 float coef(polynomial, int);                        //function returning coefficient of input polynomial's input exponent
 int leadExp(polynomial);                            //function returning the largest exponent of input polynomial
-polynomial attatch(polynomial, float, float);         //function for adding a term to a input polynomial
-polynomial add(polynomial, polynomial);             //function for adding two polynomials
+polynomial attatch(polynomial, float, float);       //function for adding a term to a input polynomial
+void add(polynomial, polynomial);                   //function for adding two polynomials and displaying its result
 
 int main(){
 
@@ -30,22 +32,33 @@ int main(){
 //0 input must be handled
     printf("Input first polynomial\n");
     float poly1[100];                               //array to store first polynomial's terms data temporarily
+    char keyInput[100];
     int poly1cnt = 0;
-    while((input = getchar()) != '\0'){
+    char* ptr = NULL;                               //variable to store cut character
 
-        if(input == ' ')                //in case when space is read
-            continue;
-        if(input == '\n')               //in case when enter is read
-            break;
+    fgets(keyInput, 100, stdin);
+    ptr = strtok(keyInput, " ");
 
-        input = input - '0';                        //changing char value into integer value
-        if(input == 0){         //exception handled in case of zero input
-            printf("Coefficient or Exponent cannot be zero! Invalid Input.");
+    while(ptr != NULL)
+    {
+        float gotValue = atof(ptr);                 //temporary value to store input number. atof changes string into it's real number value.
+
+        if(gotValue == 0){
+            printf("Coefficient or Exponent should not be zero! Input Error.\n");
             exit(0);
         }
-        poly1[poly1cnt] = input;
+
+        if(poly1cnt% 2  == 1 && (int)gotValue != gotValue)
+        {
+            printf("Exponent should be only integer! Input Error.\n");
+            exit(0);
+        }
+        poly1[poly1cnt] = gotValue;
+
+        ptr = strtok(NULL, " ");
         poly1cnt++;
     }
+
 
     if(poly1cnt % 2 != 0) {
         printf("Pair of Coefficient and Exponent does not matches! Invalid Input\n");     //exception handled in case terms does not matches
@@ -68,19 +81,28 @@ int main(){
     printf("Input Second polynomial\n");
     float poly2[100];                               //array to store first polynomial's terms data temporarily
     int poly2cnt = 0;
-    while((input = getchar()) != '\0'){
+                                                    //array to store first polynomial's terms data temporarily
 
-        if(input == ' ')                //in case when space is read
-            continue;
-        if(input == '\n')               //in case when enter is read
-            break;
+    fgets(keyInput, 100, stdin);
+    ptr = strtok(keyInput, " ");
 
-        input = input - '0';                        //changing char value into integer value
-        if(input == 0){         //exception handled in case of zero input
-            printf("Coefficient or Exponent cannot be zero! Invalid Input.");
+    while(ptr != NULL)
+    {
+        float gotValue = atof(ptr);                 //temporary value to store input number. atof changes string into it's real number value.
+
+        if(gotValue == 0){
+            printf("Coefficient or Exponent should not be zero! Input Error.\n");
             exit(0);
         }
-        poly2[poly2cnt] = input;
+
+        if(poly2cnt% 2  == 1 && (int)gotValue != gotValue)
+        {
+            printf("Exponent should be only integer! Input Error.\n");
+            exit(0);
+        }
+        poly2[poly2cnt] = gotValue;
+
+        ptr = strtok(NULL, " ");
         poly2cnt++;
     }
 
@@ -177,3 +199,9 @@ polynomial attatch(polynomial poly, float coef, float expon){
     //attatch 실행하면 polynomial의 end 1 늘려주기!
 }
 
+void add(polynomial pol1, polynomial pol2){
+
+}
+
+
+//same exponent input handling
