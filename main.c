@@ -20,13 +20,13 @@ typedef struct{
 
 polynomial initPoly();                              //function for initializing a polynomial
 int isValid(polynomial);                            //function for checking if a polynomial is valid or not
-polynomial attatch(polynomial, float, float);       //function for adding a term to a input polynomial
+polynomial attach(polynomial, float, float);       //function for adding a term to a input polynomial
 void add(polynomial, polynomial);                   //function for adding two polynomials and displaying its result
 
 int main(){
 
 
-    int input;                  //variable for storing input character
+    int input;                                      //variable for storing input character
     printf("Input first polynomial\n");
     float poly1[100];                               //array to store first polynomial's terms data temporarily
     char keyInput[100];
@@ -40,10 +40,6 @@ int main(){
     {
         float gotValue = atof(ptr);                 //temporary value to store input number. atof changes string into it's real number value.
 
-        if(gotValue == 0){
-            printf("Coefficient or Exponent should not be zero! Input Error.\n");
-            exit(0);
-        }
 
         if(poly1cnt% 2  == 1 && (int)gotValue != gotValue)
         {
@@ -66,7 +62,7 @@ int main(){
     polynomial firstPoly = initPoly();              //the polynomial variable directly representing first polynomial!
 
     for(int i = 0; i < poly1cnt; i = i + 2){
-        attatch(firstPoly, poly1[i], poly1[i+1]);
+        attach(firstPoly, poly1[i], poly1[i + 1]);
         firstPoly.end++;                            //end position of first polynomial is extended
         usedTerms++;                                //by adding new term, usedTerms count must be increased
     }
@@ -104,10 +100,6 @@ int main(){
     {
         float gotValue = atof(ptr);                 //temporary value to store input number. atof changes string into it's real number value.
 
-        if(gotValue == 0){
-            printf("Coefficient or Exponent should not be zero! Input Error.\n");
-            exit(0);
-        }
 
         if(poly2cnt% 2  == 1 && (int)gotValue != gotValue)
         {
@@ -128,7 +120,7 @@ int main(){
     polynomial secondPoly = initPoly();             //polynomial variable directly representing second polynomial!
 
     for(int i = 0; i < poly2cnt; i = i + 2){
-        attatch(secondPoly, poly2[i], poly2[i+1]);
+        attach(secondPoly, poly2[i], poly2[i + 1]);
         secondPoly.end++;                            //end position of second polynomial is extended
         usedTerms++;                                //by adding new term, usedTerms count must be increased
     }
@@ -154,7 +146,7 @@ int main(){
     };
 
 
-    add(firstPoly, secondPoly);
+    add(firstPoly, secondPoly);                     //adding two given polynomials
 
 }
 
@@ -165,20 +157,20 @@ polynomial initPoly(){
     }
 
 
-    polynomial poly;            //declaring new polynomial
+    polynomial poly;                //declaring new polynomial
 
-    if(usedTerms == -1) {           //initial state
+    if(usedTerms == -1) {           //when no polynomial is created previously
         poly.start = ++usedTerms;   //polynomial's terms will be stored in 'terms' array, and its starting point will be the very first index not used in the array
         poly.end = usedTerms;       //end point will be modified later in other functions. Default location will be same as the starting point
     }
-    else{                           //not an initial state
+    else{                           //when there exists a polynomial created previously
         poly.start = usedTerms;
         poly.end = usedTerms;
     }
 
     polyterm term;
-    term.coef = -1;
-    term.expon = -1;
+    term.coef = -1;                 //trash value
+    term.expon = -1;                //trash value
 
     terms[poly.start] = term;   //initializing a space in terms array as invalid pair. This will be used as identifier for checking is a polynomial valid, in function isValid()
 
@@ -192,7 +184,7 @@ int isValid(polynomial poly){
     else return 1;
 }
 
-polynomial attatch(polynomial poly, float coef, float expon){
+polynomial attach(polynomial poly, float coef, float expon){
     if(usedTerms == 100){                                   //exception handling for situation terms array is full
         printf("There are no space for new terms!");
         exit(0);
@@ -201,7 +193,6 @@ polynomial attatch(polynomial poly, float coef, float expon){
         terms[poly.end].expon = (int)expon;
         terms[poly.end].coef = coef;
 
-    //attatch 실행하면 polynomial의 end 1 늘려주기!
 }
 
 void add(polynomial pol1, polynomial pol2){
@@ -210,6 +201,14 @@ void add(polynomial pol1, polynomial pol2){
 
         while(1){
             if(terms[pol1cnt].expon == terms[pol2cnt].expon) {
+                if(pol1cnt == pol1.end && pol2cnt == pol2.end){
+                    if(terms[pol1cnt].expon == 0){
+                        printf("%f", terms[pol1cnt].coef + terms[pol2cnt].coef);
+                        break;
+                    }
+                    printf("%f^%d", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
+                    break;
+                }
                 printf("%f^%d+ ", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
                 pol1cnt++;
                 pol2cnt++;
@@ -223,29 +222,36 @@ void add(polynomial pol1, polynomial pol2){
                 pol2cnt++;
             }
 
-            if(pol1cnt > pol1.end && pol2cnt <= pol2.end){
+
+            if(pol1cnt > pol1.end && pol2cnt <= pol2.end){          //when pol1 has reached its' end
                 while(pol2cnt < pol2.end){
                     printf("%f^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
                     pol2cnt++;
+                }
+                if(terms[pol2cnt].expon == 0){
+                    printf("%f", terms[pol2cnt].coef);
+                    break;
                 }
                 printf("%f^%d.", terms[pol2cnt].coef, terms[pol2cnt].expon);
                 break;
             }
 
-            if(pol2cnt > pol2.end && pol1cnt <= pol1.end){
+            if(pol2cnt > pol2.end && pol1cnt <= pol1.end){          //when pol2 has reached its' end
                 while(pol1cnt < pol1.end){
                     printf("%f^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
                     pol1cnt++;
                 }
+                if(terms[pol1cnt].expon == 0){
+                    printf("%f", terms[pol1cnt].coef);
+                    break;
+                }
                 printf("%f^%d.", terms[pol1cnt].coef, terms[pol1cnt].expon);
                 break;
             }
+
 
         }
 
 
     }
 }
-
-
-//same exponent input handling
