@@ -206,46 +206,46 @@ void add(polynomial pol1, polynomial pol2){
                         printf("%f", terms[pol1cnt].coef + terms[pol2cnt].coef);
                         break;
                     }
-                    printf("%f^%d", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
+                    printf("%fx^%d", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
                     break;
                 }
-                printf("%f^%d+ ", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
+                printf("%fx^%d+ ", terms[pol1cnt].coef + terms[pol2cnt].coef, terms[pol1cnt].expon);
                 pol1cnt++;
                 pol2cnt++;
             }
             else if(terms[pol1cnt].expon > terms[pol2cnt].expon){
-                printf("%f^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
+                printf("%fx^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
                 pol1cnt++;
             }
             else if(terms[pol1cnt].expon < terms[pol2cnt].expon){
-                printf("%f^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
+                printf("%fx^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
                 pol2cnt++;
             }
 
 
             if(pol1cnt > pol1.end && pol2cnt <= pol2.end){          //when pol1 has reached its' end
                 while(pol2cnt < pol2.end){
-                    printf("%f^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
+                    printf("%fx^%d+ ", terms[pol2cnt].coef, terms[pol2cnt].expon);
                     pol2cnt++;
                 }
                 if(terms[pol2cnt].expon == 0){
                     printf("%f", terms[pol2cnt].coef);
                     break;
                 }
-                printf("%f^%d.", terms[pol2cnt].coef, terms[pol2cnt].expon);
+                printf("%fx^%d.", terms[pol2cnt].coef, terms[pol2cnt].expon);
                 break;
             }
 
             if(pol2cnt > pol2.end && pol1cnt <= pol1.end){          //when pol2 has reached its' end
                 while(pol1cnt < pol1.end){
-                    printf("%f^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
+                    printf("%fx^%d+ ", terms[pol1cnt].coef, terms[pol1cnt].expon);
                     pol1cnt++;
                 }
                 if(terms[pol1cnt].expon == 0){
                     printf("%f", terms[pol1cnt].coef);
                     break;
                 }
-                printf("%f^%d.", terms[pol1cnt].coef, terms[pol1cnt].expon);
+                printf("%fx^%d.", terms[pol1cnt].coef, terms[pol1cnt].expon);
                 break;
             }
 
